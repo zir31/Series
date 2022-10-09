@@ -38,5 +38,33 @@ namespace SeriesWeb.Controllers
             }
             return View(category);
         }
+
+        //GET
+        public IActionResult Edit(int? id)
+        {
+            if (id is null || id == 0)
+                return NotFound();
+
+            var categoryFromDB = _db.Categories.Find(id);
+
+            if (categoryFromDB is null)
+                return NotFound();
+
+            return View(categoryFromDB);
+        }
+
+        //POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Category category)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Categories.Update(category);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(category);
+        }
     }
 }
