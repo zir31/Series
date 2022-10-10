@@ -34,6 +34,7 @@ namespace SeriesWeb.Controllers
             {
                 _db.Categories.Add(category);
                 _db.SaveChanges();
+                TempData["success"] = "Category created succsessfully";
                 return RedirectToAction("Index");
             }
             return View(category);
@@ -62,9 +63,38 @@ namespace SeriesWeb.Controllers
             {
                 _db.Categories.Update(category);
                 _db.SaveChanges();
+                TempData["success"] = "Category edited succsessfully";
                 return RedirectToAction("Index");
             }
             return View(category);
+        }
+
+        //GET
+        public IActionResult Delete(int? id)
+        {
+            if (id is null || id == 0)
+                return NotFound();
+
+            var categoryFromDB = _db.Categories.Find(id);
+
+            if (categoryFromDB is null)
+                return NotFound();
+
+            return View(categoryFromDB);
+        }
+
+        //POST
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePOST(int? id)
+        {
+            var category = _db.Categories.Find(id);
+            if (category is null)
+                return NotFound();
+            _db.Categories.Remove(category);
+            _db.SaveChanges();
+            TempData["success"] = "Category deleted succsessfully";
+            return RedirectToAction("Index");
         }
     }
 }
